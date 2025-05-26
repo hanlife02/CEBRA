@@ -44,25 +44,25 @@ def _initialize_orthogonal_alignment_data():
 
     orthogonal_alignment_data = []
 
-    # different sample sizes
+    # 不同的样本大小
     orthogonal_alignment_data.append(
         (embedding_100_4d, embedding_150_4d, labels_100_1d, labels_150_1d))
-    # different sample sizes and more than one feature in the labels
+    # 不同的样本大小且标签具有多个特征
     orthogonal_alignment_data.append(
         (embedding_100_4d, embedding_150_4d, labels_100_3d, labels_150_3d))
-    # embedding to align has a single sample
+    # 要对齐的嵌入只有单个样本
     orthogonal_alignment_data.append(
         (embedding_100_4d, embedding_1_4d, labels_100_1d, labels_1_1d))
-    # embeddings with one feature dimension only
+    # 只有一个特征维度的嵌入
     orthogonal_alignment_data.append(
         (embedding_100_1d, embedding_100_1d, labels_100_1d, labels_100_1d))
-    # embeddings with one feature dimension only, as None
+    # 只有一个特征维度的嵌入，形状为None
     orthogonal_alignment_data.append(
         (embedding_100_none, embedding_100_none, labels_100_1d, labels_100_1d))
-    # labels with one feature dimension only, as None
+    # 只有一个特征维度的标签，形状为None
     orthogonal_alignment_data.append(
         (embedding_100_4d, embedding_100_4d, labels_100_none, labels_100_none))
-    # same sample size, no labels
+    # 相同样本大小，无标签
     orthogonal_alignment_data.append(
         (embedding_100_4d, embedding_100_4d, None, None))
 
@@ -82,29 +82,29 @@ def _initialize_invalid_orthogonal_alignment_data():
 
     orthogonal_alignment_data = []
 
-    # Embeddings with different number of features
+    # 具有不同特征数量的嵌入
     orthogonal_alignment_data.append(
         (embedding_100_4d, embedding_110_6d, labels_100_1d, labels_110_1d,
          "Invalid.*data"))
-    # Reference embeddings and labels are not the same sample size
+    # 参考嵌入和标签的样本大小不同
     orthogonal_alignment_data.append(
         (embedding_100_4d, embedding_150_4d, labels_150_1d, labels_150_1d,
          "Mismatched.*data.*labels"))
-    # Embeddings and labels to align are not the same sample size
+    # 要对齐的嵌入和标签的样本大小不同
     orthogonal_alignment_data.append(
         (embedding_100_4d, embedding_150_4d, labels_100_1d, labels_100_1d,
          "Mismatched.*data.*labels"))
-    # Reference embedding contain only one sample
+    # 参考嵌入只包含一个样本
     orthogonal_alignment_data.append(
         (embedding_1_4d, embedding_100_4d, labels_1_1d, labels_100_1d,
          "Invalid.*reference.*data"))
-    # Missing reference label
+    # 缺少参考标签
     orthogonal_alignment_data.append((embedding_100_4d, embedding_150_4d, None,
                                       labels_100_1d, "Missing.*labels"))
-    # Missing alignment label
+    # 缺少对齐标签
     orthogonal_alignment_data.append((embedding_100_4d, embedding_150_4d,
                                       labels_100_1d, None, "Missing.*labels"))
-    # No labels for embeddings that are not already aligned on time (not the same number of samples)
+    # 对于在时间上未对齐的嵌入（样本数量不同）缺少标签
     orthogonal_alignment_data.append(
         (embedding_100_4d, embedding_150_4d, None, None, "Missing.*labels"))
 
@@ -185,7 +185,7 @@ def test_orthogonal_alignment(seed):
                                                       label=labels_100_1d)
     assert np.allclose(aligned_embedding, embedding_100_4d, atol=0.03)
 
-    # and without labels
+    # 不使用标签的情况
     aligned_embedding = alignment_model.fit_transform(ref_data=embedding_100_4d,
                                                       data=np.dot(
                                                           embedding_100_4d,
@@ -205,20 +205,20 @@ def _initialize_embedding_ensembling_data():
 
     embedding_ensembling_data = []
 
-    # Embeddings of same shape, no labels
+    # 相同形状的嵌入，无标签
     embedding_ensembling_data.append(
         ([embedding_100_4d, embedding_100_4d_2, embedding_100_4d_3], None, 0))
-    # Embeddings with a single feature dimension (as None)
+    # 具有单个特征维度的嵌入（形状为None）
     embedding_ensembling_data.append(([embedding_110_none,
                                        embedding_110_none], None, 0))
-    # Embeddings and corresponding labels to use for alignment (optional)
+    # 嵌入和用于对齐的相应标签（可选）
     embedding_ensembling_data.append(
         ([embedding_100_4d, embedding_100_4d_2, embedding_100_4d_3],
          [labels_100_1d, labels_100_1d_2, labels_100_1d_3], 0))
-    # Parallel processing, with 2 jobs
+    # 并行处理，使用2个作业
     embedding_ensembling_data.append(
         ([embedding_100_4d, embedding_100_4d_2, embedding_100_4d_3], None, 2))
-    # Parallel processing, with all jobs available
+    # 并行处理，使用所有可用作业
     embedding_ensembling_data.append(
         ([embedding_100_4d, embedding_100_4d_2, embedding_100_4d_3], None, -1))
 
@@ -239,24 +239,24 @@ def _initialize_invalid_embedding_ensembling_data():
 
     embedding_ensembling_data = []
 
-    # Number of jobs set to None
+    # 作业数设置为None
     embedding_ensembling_data.append(
         ([embedding_100_4d, embedding_100_4d_2,
           embedding_100_4d_3], None, None, "Invalid.*n_jobs"))
-    # Embeddings with different sample sizes
+    # 具有不同样本大小的嵌入
     embedding_ensembling_data.append(
         ([embedding_100_4d, embedding_100_4d_2,
           embedding_150_4d], None, 0, "Inconsistent.*embeddings"))
-    # Embeddings with different number of features
+    # 具有不同特征数量的嵌入
     embedding_ensembling_data.append(
         ([embedding_100_4d, embedding_100_4d_2,
           embedding_100_6d], None, 0, "Inconsistent.*embeddings"))
-    # Embeddings and labels with labels with a different sample size as their corresponding embedding
+    # 嵌入和标签，其中标签与其对应嵌入的样本大小不同
     embedding_ensembling_data.append(
         ([embedding_100_4d, embedding_100_4d_2,
           embedding_100_4d_3], [labels_100_1d, labels_100_1d_2,
                                 labels_150_1d], 0, "Mismatched.*data.*labels"))
-    # Embedding with a single sample (need at least {k_top})
+    # 只有单个样本的嵌入（至少需要{k_top}个）
     embedding_ensembling_data.append(
         ([embedding_1_4d, embedding_1_4d], None, 0, "Invalid.*data"))
 
@@ -279,7 +279,7 @@ def test_embeddings_ensembling_without_labels():
     embedding_100_4d = np.random.uniform(0, 1, (100, 4))
     embedding_100_4d_2 = np.random.uniform(0, 1, (100, 4))
 
-    # same sample size, no labels
+    # 相同样本大小，无标签
     joint_embedding = cebra_data_helper.ensemble_embeddings(
         embeddings=[embedding_100_4d, embedding_100_4d_2], labels=[None, None])
     joint_embedding_without_labels = cebra_data_helper.ensemble_embeddings(

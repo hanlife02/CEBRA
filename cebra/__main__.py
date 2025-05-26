@@ -19,7 +19,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-"""CEBRA command line interface.
+"""CEBRA命令行界面。
 
 
 """
@@ -31,7 +31,7 @@ import cebra
 
 
 def train(parser, kwargs):
-    """Train a new CEBRA model, potentially starting from a checkpoint."""
+    """训练一个新的CEBRA模型，可能从检查点开始。"""
     parser.add_argument("--variant", choices=cebra.CEBRA.get_variants())
     args, kwargs = parser.parse_known_args()
     cebra_cls = cebra.CEBRA.get_variant(args.variant)
@@ -44,7 +44,7 @@ def train(parser, kwargs):
         "--override",
         "-r",
         action="store_true",
-        help="Override an existing checkpoint (don't load).",
+        help="覆盖现有检查点（不加载）。",
     )
     args, kwargs = parser.parse_known_args(kwargs)
 
@@ -53,22 +53,22 @@ def train(parser, kwargs):
     try:
         experiment.train()
     except KeyboardInterrupt:
-        print("Training aborted. Saving the model.")
+        print("训练已中止。正在保存模型。")
         sys.exit(1)
     except Exception as exception:
-        print("Error occurred. Aborting training.")
+        print("发生错误。正在中止训练。")
         raise exception
     finally:
         experiment.save()
 
 
 def transform(parser, kwargs):
-    """Transform an existing dataset with a trained CEBRA model."""
+    """使用训练好的CEBRA模型转换现有数据集。"""
     print("transform a dataset.")
 
 
 def app(parser, kwargs):
-    """Start server for serving the web interface of CEBRA."""
+    """启动服务器以提供CEBRA的Web界面。"""
     from cebra.integrations.streamlit import App
 
     App.add_arguments(parser)
@@ -84,7 +84,7 @@ def main():
     parser.add_argument(
         "command",
         choices=list(commands.keys()),
-        help="The subcommand to run:\n" +
+        help="要运行的子命令：\n" +
         "\n".join(f"{name}\t{cmd.__doc__}" for name, cmd in commands.items()),
         metavar="command",
     )

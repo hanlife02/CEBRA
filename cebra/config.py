@@ -33,56 +33,53 @@ import cebra.datasets
 class Config:
     data: str = dataclasses.field(
         init=False,
-        doc="""The dataset to run CEBRA on.
-    Standard datasets are available in cebra.datasets.
-    Your own datasets can be created by subclassing
-    cebra.data.Dataset and registering the dataset
-    using the ``@cebra.datasets.register`` decorator.
+        doc="""运行CEBRA的数据集。
+    标准数据集在cebra.datasets中可用。
+    您可以通过继承cebra.data.Dataset并使用
+    ``@cebra.datasets.register``装饰器注册数据集来创建自己的数据集。
     """,
     )
 
     variant: str = dataclasses.field(
         default="single-session",
-        doc="""The CEBRA variant to run.
+        doc="""要运行的CEBRA变体。
     """,
     )
 
     logdir: str = dataclasses.field(
         default="/logs/single-rat-hippocampus-behavior/",
-        doc="""Model log directory.
-    This should be either a new empty
-    directory, or a pre-existing directory containing a trained
-    CEBRA model.
+        doc="""模型日志目录。
+    这应该是一个新的空目录，或者是包含已训练CEBRA模型的
+    现有目录。
     """,
     )
     distance: str = dataclasses.field(
-        default="cosine", doc="""Distance type to use in calculating loss""")
+        default="cosine", doc="""计算损失时使用的距离类型""")
 
     loss_distance: str = dataclasses.field(
         default="cosine",
         doc=
-        """Old version of 'distance' argument. Distance type to use in calculating loss""",
+        """'distance'参数的旧版本。计算损失时使用的距离类型""",
     )
 
     temperature_mode: Literal["auto", "constant"] = dataclasses.field(
         default="constant",
         doc=
-        """Temperature for InfoNCE loss. If 'auto', the temperature is learnable. If set to 'constant', it is fixed to the given value""",
+        """InfoNCE损失的温度。如果为'auto'，温度是可学习的。如果设置为'constant'，则固定为给定值""",
     )
 
     temperature: float = dataclasses.field(
-        default=1.0, doc="""Temperature for InfoNCE loss.""")
+        default=1.0, doc="""InfoNCE损失的温度。""")
 
     min_temperature: Optional[float] = dataclasses.field(
-        default=None, doc="""Minimum temperature for learnable temperature""")
+        default=None, doc="""可学习温度的最小值""")
 
     time_offset: int = dataclasses.field(
         default=10,
         doc=
-        """ Distance (in time) between positive pairs. The interpretation of this parameter depends on
-        the chosen conditional distribution, but generally a higher time offset increases the difficulty of
-        the learning task, and (in a certain range) improves the quality of the representation. The time
-        offset would typically be larger than the specified receptive field of the model.""",
+        """ 正样本对之间的距离（时间上）。此参数的解释取决于所选的条件分布，
+        但通常较高的时间偏移会增加学习任务的难度，并且（在一定范围内）提高表示的质量。
+        时间偏移通常应大于模型指定的感受野。""",
     )
 
     delta: float = dataclasses.field(
@@ -96,45 +93,44 @@ class Config:
     conditional: str = dataclasses.field(
         default="time_delta",
         doc=
-        """Type of conditional distribution. Valid standard methods are "time_delta", "time", "delta", and more
-        methods can be added to the ``cebra.data`` registry.""",
+        """条件分布的类型。有效的标准方法有"time_delta"、"time"、"delta"，
+        更多方法可以添加到``cebra.data``注册表中。""",
     )
 
     num_steps: int = dataclasses.field(
         default=1000,
-        doc="""Number of total training steps.
-    Number of total training steps. Note that training duration
-    of CEBRA is independent of the dataset size. The total training
-    examples seen will amount to ``num-steps x batch-size``,
-    irrespective of dataset size.
+        doc="""总训练步骤数。
+    CEBRA的训练持续时间与数据集大小无关。看到的总训练
+    示例将达到``num-steps x batch-size``，
+    与数据集大小无关。
     """,
     )
 
     learning_rate: float = dataclasses.field(
-        default=3e-4, doc="""Learning rate for Adam optimizer.""")
+        default=3e-4, doc="""Adam优化器的学习率。""")
     model: str = dataclasses.field(
         default="offset10-model",
         doc=
-        """Model architecture. Available options are 'offset10-model', 'offset5-model' and 'offset1-model'.""",
+        """模型架构。可用选项有'offset10-model'、'offset5-model'和'offset1-model'。""",
     )
 
     models: list = dataclasses.field(
         default_factory=lambda: [],
         doc=
-        """Model architectures for multisession training. If not set, the model argument will be used for all sessions""",
+        """多会话训练的模型架构。如果未设置，将对所有会话使用model参数""",
     )
 
     batch_size: int = dataclasses.field(
-        default=512, doc="""Total batch size for each training step.""")
+        default=512, doc="""每个训练步骤的总批次大小。""")
 
     num_hidden_units: int = dataclasses.field(default=32,
-                                              doc="""Number of hidden units.""")
+                                              doc="""隐藏单元数量。""")
 
     num_output: int = dataclasses.field(default=8,
-                                        doc="""Dimension of output embedding""")
+                                        doc="""输出嵌入的维度""")
 
     device: str = dataclasses.field(
-        default="cpu", doc="""Device for training. Options: cpu/cuda""")
+        default="cpu", doc="""训练设备。选项：cpu/cuda""")
 
     tqdm: bool = dataclasses.field(
         default=False, doc="""Activate tqdm for logging during the training""")
@@ -188,7 +184,7 @@ class Config:
 
     @classmethod
     def add_arguments(cls, parser: argparse.ArgumentParser):
-        """Add arguments to the argument parser."""
+        """向参数解析器添加参数。"""
         cls._add_arguments(
             parser,
             data={"choices": cebra.datasets.get_options()},
@@ -204,5 +200,5 @@ class Config:
 
 
 def add_arguments(parser):
-    """Add CEBRA command line arguments to an argparser."""
+    """向argparser添加CEBRA命令行参数。"""
     return Config.add_arguments(parser)

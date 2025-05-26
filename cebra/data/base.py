@@ -19,7 +19,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-"""Base classes for datasets and loaders."""
+"""数据集和加载器的基类。"""
 
 import abc
 
@@ -37,16 +37,14 @@ __all__ = ["Dataset", "Loader"]
 
 
 class Dataset(abc.ABC, cebra.io.HasDevice):
-    """Abstract base class for implementing a dataset.
+    """实现数据集的抽象基类。
 
-    The class attributes provide information about the shape of the data when
-    indexing this dataset.
+    类属性提供有关索引此数据集时数据形状的信息。
 
     Attributes:
-        input_dimension: The input dimension of the signal in this dataset.
-            Models applied on this this dataset should match this dimensionality.
-        offset: The offset determines the shape of the data obtained with the
-            ``__getitem__`` and :py:meth:`expand_index` methods.
+        input_dimension: 此数据集中信号的输入维度。
+            应用于此数据集的模型应匹配此维度。
+        offset: 偏移量确定通过``__getitem__``和:py:meth:`expand_index`方法获得的数据形状。
     """
 
     def __init__(self,
@@ -69,12 +67,12 @@ class Dataset(abc.ABC, cebra.io.HasDevice):
         if self.download:
             if self.data_url is None:
                 raise ValueError(
-                    "Missing data URL. Please provide the URL to download the data."
+                    "缺少数据URL。请提供下载数据的URL。"
                 )
 
             if self.data_checksum is None:
                 raise ValueError(
-                    "Missing data checksum. Please provide the checksum to verify the data integrity."
+                    "缺少数据校验和。请提供校验和以验证数据完整性。"
                 )
 
             cebra_data_assets.download_file_with_progress_bar(
@@ -90,51 +88,44 @@ class Dataset(abc.ABC, cebra.io.HasDevice):
 
     @property
     def continuous_index(self) -> torch.Tensor:
-        """The continuous index, if available.
+        """连续索引（如果可用）。
 
-        The continuous index along with a similarity metric is used for drawing
-        positive and/or negative samples.
+        连续索引与相似性度量一起用于绘制正样本和/或负样本。
 
         Returns:
-            Tensor of shape ``(N,d)``, representing the
-            index for all ``N`` samples in the dataset.
+            形状为``(N,d)``的张量，表示数据集中所有``N``个样本的索引。
         """
         return None
 
     @property
     def discrete_index(self) -> torch.Tensor:
-        """The discrete index, if available.
+        """离散索引（如果可用）。
 
-        The discrete index can be used for making an embedding invariant to
-        a variable for to restrict positive samples to share the same index variable.
-        To implement more complicated indexing operations (such as modeling similiarities
-        between indices), it is better to transform a discrete into a continuous index.
+        离散索引可用于使嵌入对变量不变，或限制正样本共享相同的索引变量。
+        要实现更复杂的索引操作（例如建模索引之间的相似性），
+        最好将离散索引转换为连续索引。
 
         Returns:
-            Tensor of shape ``(N,)``, representing the index
-            for all ``N`` samples in the dataset.
+            形状为``(N,)``的张量，表示数据集中所有``N``个样本的索引。
         """
         return None
 
     def expand_index(self, index: torch.Tensor) -> torch.Tensor:
-        """
+        """扩展索引以包含偏移量。
 
         Args:
-            index: A one-dimensional tensor of type long containing indices
-                to select from the dataset.
+            index: 一个类型为long的一维张量，包含要从数据集中选择的索引。
 
         Returns:
-            An expanded index of shape ``(len(index), len(self.offset))`` where
-            the elements will be
-            ``expanded_index[i,j] = index[i] + j - self.offset.left`` for all ``j``
-            in ``range(0, len(self.offset))``.
+            一个形状为``(len(index), len(self.offset))``的扩展索引，其中
+            元素将是``expanded_index[i,j] = index[i] + j - self.offset.left``，
+            对于所有``j``在``range(0, len(self.offset))``中。
 
-        Note:
-            Requires the :py:attr:`offset` to be set.
+        注意:
+            需要设置:py:attr:`offset`。
         """
 
-        # TODO(stes) potential room for speed improvements by pre-allocating these tensors/
-        # using non_blocking copy operation.
+        # TODO(stes) 通过预分配这些张量/使用非阻塞复制操作可能有提高速度的空间。
         offset = torch.arange(-self.offset.left,
                               self.offset.right,
                               device=index.device)
@@ -145,17 +136,16 @@ class Dataset(abc.ABC, cebra.io.HasDevice):
         return index[:, None] + offset[None, :]
 
     def expand_index_in_trial(self, index, trial_ids, trial_borders):
-        """When the neural/behavior is in discrete trial, e.g) Monkey Reaching Dataset
-        the slice should be defined within the trial.
-        trial_ids is in size of a length of self.index and indicate the trial id of the index belong to.
-        trial_borders is in size of a length of self.idnex and indicate the border of each trial.
+        """当神经/行为在离散试验中时，例如）猴子伸手数据集
+        切片应该在试验内定义。
+        trial_ids的大小为self.index的长度，表示索引所属的试验id。
+        trial_borders的大小为self.idnex的长度，表示每个试验的边界。
 
-        Todo:
-            - rewrite
+        待办:
+            - 重写
         """
 
-        # TODO(stes) potential room for speed improvements by pre-allocating these tensors/
-        # using non_blocking copy operation.
+        # TODO(stes) 通过预分配这些张量/使用非阻塞复制操作可能有提高速度的空间。
         offset = torch.arange(-self.offset.left,
                               self.offset.right,
                               device=index.device)
@@ -173,13 +163,13 @@ class Dataset(abc.ABC, cebra.io.HasDevice):
 
     @abc.abstractmethod
     def __getitem__(self, index: torch.Tensor) -> torch.Tensor:
-        """Return samples at the given time indices.
+        """返回给定时间索引处的样本。
 
         Args:
-            index: An indexing tensor of type :py:attr:`torch.long`.
+            index: 类型为:py:attr:`torch.long`的索引张量。
 
         Returns:
-            Samples from the dataset matching the shape
+            来自数据集的样本，匹配形状
             ``(len(index), self.input_dimension, len(self.offset))``
         """
 
@@ -187,9 +177,9 @@ class Dataset(abc.ABC, cebra.io.HasDevice):
 
     @abc.abstractmethod
     def load_batch(self, index: BatchIndex) -> Batch:
-        """Return the data at the specified index location.
+        """返回指定索引位置的数据。
 
-        TODO: adapt signature to support Batches and List[Batch]
+        TODO: 调整签名以支持Batches和List[Batch]
         """
         raise NotImplementedError()
 

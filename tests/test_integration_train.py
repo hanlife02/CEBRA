@@ -104,8 +104,8 @@ def test_train(dataset_name, loader_type):
 
     dataset = cebra.datasets.init(dataset_name)
     if loader_type not in cebra_data_helper.get_loader_options(dataset):
-        # skip this test, since the data/loader combination is not valid.
-        pytest.skip("Not a valid dataset/loader combination.")
+        # 跳过此测试，因为数据/加载器组合无效。
+        pytest.skip("不是有效的数据集/加载器组合。")
     loader = loader_type(
         dataset,
         num_steps=args.num_steps,

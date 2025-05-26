@@ -19,22 +19,20 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-"""CEBRA is a library for estimating Consistent Embeddings of high-dimensional Recordings
-using Auxiliary variables. It contains self-supervised learning algorithms implemented in
-PyTorch, and has support for a variety of different datasets common in biology and neuroscience.
+"""CEBRA是一个用于估计高维记录一致性嵌入的库，使用辅助变量。
+它包含在PyTorch中实现的自监督学习算法，并支持生物学和神经科学中常见的各种数据集。
 """
 
 is_sklearn_available = False
 try:
-    # TODO(stes): More common integrations people care about (e.g. PyTorch lightning)
-    # could be added here.
+    # TODO(stes): 可以在这里添加更多人们关心的常见集成（例如PyTorch lightning）
     from cebra.integrations.sklearn.cebra import CEBRA
     from cebra.integrations.sklearn.decoder import KNNDecoder
     from cebra.integrations.sklearn.decoder import L1LinearRegressor
 
     is_sklearn_available = True
 except ImportError:
-    # silently fail for now
+    # 暂时静默失败
     pass
 
 is_matplotlib_available = False
@@ -43,7 +41,7 @@ try:
 
     is_matplotlib_available = True
 except ImportError:
-    # silently fail for now
+    # 暂时静默失败
     pass
 
 is_plotly_available = False
@@ -52,7 +50,7 @@ try:
 
     is_plotly_available = True
 except ImportError:
-    # silently fail for now
+    # 暂时静默失败
     pass
 
 from cebra.data.load import load as load_data
@@ -73,18 +71,18 @@ __lazy_imports = {}
 
 
 def allow_lazy_imports():
-    """Enables lazy imports of all submodules and packages of cebra.
+    """启用cebra所有子模块和包的延迟导入。
 
-    If called, references to ``cebra.<module_name>`` will be automatically
-    lazily imported when first called in the code, and not raise a warning.
+    如果调用，对``cebra.<module_name>``的引用将在代码中首次调用时自动延迟导入，
+    并且不会引发警告。
     """
     __allow_lazy_imports = True
 
 
 def __getattr__(key):
-    """Lazy import of cebra submodules and -packages.
+    """cebra子模块和包的延迟导入。
 
-    Once :py:mod:`cebra` is imported, it is possible to lazy import
+    一旦导入:py:mod:`cebra`，就可以进行延迟导入
 
     """
     if key == "CEBRA":
@@ -104,10 +102,10 @@ def __getattr__(key):
         import warnings
 
         if key not in __lazy_imports:
-            # NOTE(celia): condition needed when testing the string examples
-            # so that the function doesn't try to import the testing packages
-            # (pytest plugins, SetUpModule and TearDownModule) as cebra.{key}.
-            # We just make sure that pytest is installed.
+            # NOTE(celia): 测试字符串示例时需要此条件
+            # 以便函数不会尝试将测试包
+            # （pytest插件、SetUpModule和TearDownModule）导入为cebra.{key}。
+            # 我们只需确保安装了pytest。
             if any(name in key.lower()
                    for name in ["pytest", "setup", "module"]):
                 import pytest

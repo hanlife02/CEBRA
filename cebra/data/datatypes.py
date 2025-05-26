@@ -79,20 +79,17 @@ BatchIndex = collections.namedtuple(
 
 
 class Offset:
-    """Number of samples left and right from an index.
+    """索引左侧和右侧的样本数量。
 
-    When indexing datasets, some operations require input of multiple neighbouring samples
-    across the time dimension. ``Offset`` represents a simple pair of left and right
-    offsets with respect to a index. It provides the range of samples to consider around the current index for
-    sampling across the time dimension.
+    在索引数据集时，某些操作需要跨时间维度的多个相邻样本的输入。``Offset``表示相对于索引的
+    简单的左右偏移对。它提供了在时间维度上采样时要考虑的当前索引周围的样本范围。
 
-    The provided offsets are positive :py:class:`int`, so that the ``left`` offset corresponds
-    to the number of samples to consider previous to the index while the ``right`` offset is strictly positive and
-    corresponds to the the index itself and the number of samples to consider following the index.
+    提供的偏移量是正的:py:class:`int`，因此``left``偏移量对应于要考虑的索引之前的样本数量，
+    而``right``偏移量是严格正数，对应于索引本身以及要考虑的索引之后的样本数量。
 
     Note:
-        By convention, the right bound should always be **strictly positive** as it is including the current index itself.
-        Hence, for instance, to only consider the current element, you will have to provide (0,1) at :py:class:`Offset` initialization.
+        按照惯例，右边界应该始终是**严格正数**，因为它包括当前索引本身。
+        因此，例如，要仅考虑当前元素，您必须在:py:class:`Offset`初始化时提供(0,1)。
 
     """
 

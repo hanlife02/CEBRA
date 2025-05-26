@@ -19,7 +19,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-"""Define the CEBRA model."""
+"""定义CEBRA模型。"""
 
 import itertools
 from typing import (Callable, Dict, Iterable, List, Literal, Optional, Tuple,
@@ -86,37 +86,31 @@ def _init_loader(
     shared_kwargs: dict,
     extra_kwargs: dict,
 ) -> Tuple[cebra.data.Loader, str]:
-    """Select the right dataloader for the dataset and given arguments.
+    """为数据集和给定参数选择正确的数据加载器。
 
     Args:
-        is_cont: Use continuous data loaders for training
-        is_disc: Use a discrete data loader for training
-        is_full: Train using the full dataset (batch gradient descent) instead of
-            using stochastic gradient descent on mini batches
-        is_multi: Use multi-session training
-        is_hybrid: Jointly train on time and behavior
-        shared_kwargs: Keyword arguments that will always be passed to the
-            data loader. See ``extra_kwargs`` for arguments that are only relevant
-            for some dataloaders.
-        extra_kwargs: Additional keyword arguments used for other parts of the
-            algorithm, which might (depending on the arguments for this function)
-            be passed to the data loader.
+        is_cont: 使用连续数据加载器进行训练
+        is_disc: 使用离散数据加载器进行训练
+        is_full: 使用完整数据集进行训练（批量梯度下降）而不是
+            在小批量上使用随机梯度下降
+        is_multi: 使用多会话训练
+        is_hybrid: 联合训练时间和行为
+        shared_kwargs: 总是传递给数据加载器的关键字参数。
+            有关仅与某些数据加载器相关的参数，请参见``extra_kwargs``。
+        extra_kwargs: 用于算法其他部分的附加关键字参数，
+            这些参数可能（取决于此函数的参数）传递给数据加载器。
 
     Raises:
-        ValueError: If an argument is missing in ``extra_kwargs`` or ``shared_kwargs``
-            needed to run the requested configuration.
-        NotImplementedError: If the requested combinations of arguments is not yet
-            implemented. If this error occurs, check if the desired functionality
-            is implemented in :py:mod:`cebra.data`, and consider using the CEBRA
-            PyTorch API directly.
+        ValueError: 如果运行请求的配置所需的参数在``extra_kwargs``或``shared_kwargs``中缺失。
+        NotImplementedError: 如果请求的参数组合尚未实现。如果发生此错误，
+            请检查所需功能是否在:py:mod:`cebra.data`中实现，并考虑直接使用CEBRA PyTorch API。
 
     Returns:
-        the data loader and name of a suitable solver
+        数据加载器和合适求解器的名称
 
     Note:
-        Not all dataloading options are implemented yet and this function can
-        raise a ``NotImplementedError`` for invalid argument combinations.
-        The pytorch API should be directly used in these cases.
+        并非所有数据加载选项都已实现，此函数可能会对无效的参数组合
+        引发``NotImplementedError``。在这些情况下应直接使用pytorch API。
     """
 
     raise_not_implemented_error = False
@@ -400,24 +394,22 @@ def _load_cebra_with_sklearn_backend(cebra_info: Dict) -> "CEBRA":
 
 
 class CEBRA(TransformerMixin, BaseEstimator):
-    """CEBRA model defined as part of a ``scikit-learn``-like API.
+    """作为``scikit-learn``风格API一部分定义的CEBRA模型。
 
     Attributes:
         model_architecture (str):
-            The architecture of the neural network model trained with contrastive
-            learning to encode the data. We provide a list of pre-defined models which can be displayed by running
-            :py:func:`cebra.models.get_options`. The user can also register their own custom models (see in
-            :ref:`Docs <Model architecture>`). |Default:| ``offset1-model``
+            使用对比学习训练来编码数据的神经网络模型架构。我们提供了一系列预定义模型，
+            可通过运行:py:func:`cebra.models.get_options`显示。用户也可以注册自己的自定义模型
+            （参见:ref:`Docs <Model architecture>`）。|Default:| ``offset1-model``
         device (str):
-            The device used for computing. Choose from ``cpu``, ``cuda``, ``cuda_if_available'`` or a
-            particular GPU via ``cuda:0``. |Default:| ``cuda_if_available``
+            用于计算的设备。可选择``cpu``、``cuda``、``cuda_if_available``或
+            通过``cuda:0``指定特定GPU。|Default:| ``cuda_if_available``
         criterion (str):
-            The training objective. Currently only the default ``InfoNCE`` is supported. The InfoNCE loss
-            is specifically designed for contrastive learning. |Default:| ``InfoNCE``
+            训练目标。目前仅支持默认的``InfoNCE``。InfoNCE损失
+            专门为对比学习设计。|Default:| ``InfoNCE``
         distance (str):
-            The distance function used in the training objective to define the positive and negative
-            samples with respect to the reference samples. Currently supports ``cosine`` and ``euclidean`` distances,
-            ``cosine`` being specifically adapted for contrastive learning. |Default:| ``cosine``
+            训练目标中用于定义相对于参考样本的正负样本的距离函数。
+            目前支持``cosine``和``euclidean``距离，``cosine``特别适用于对比学习。|Default:| ``cosine``
         conditional (str):
             The conditional distribution to use to sample the positive samples. Reference and negative samples
             are drawn from a uniform prior. For positive samples, it currently supports 3 types of distributions:
@@ -517,22 +509,20 @@ class CEBRA(TransformerMixin, BaseEstimator):
 
     @classmethod
     def supported_model_architectures(self, pattern: str = "*") -> List[str]:
-        """Get a list of supported model architectures.
+        """获取支持的模型架构列表。
 
-        These values can be directly passed to the ``model_architecture``
-        argument.
+        这些值可以直接传递给``model_architecture``参数。
 
         Args:
-            pattern: Optional pattern for filtering the architecture list.
-                Should use the :py:mod:`fnmatch` patterns.
+            pattern: 用于过滤架构列表的可选模式。
+                应使用:py:mod:`fnmatch`模式。
 
         Returns:
-            A list of all supported model architectures.
+            所有支持的模型架构列表。
 
         Note:
-            It is always possible to use the additional model architectures
-            given by :py:func:`cebra.models.get_options` via the CEBRA pytorch
-            API.
+            始终可以通过CEBRA pytorch API使用:py:func:`cebra.models.get_options`
+            给出的其他模型架构。
         """
 
         # TODO(stes): Check directly via the classes (but without initializing)
@@ -579,10 +569,10 @@ class CEBRA(TransformerMixin, BaseEstimator):
 
     @property
     def num_sessions(self) -> Optional[int]:
-        """The number of sessions.
+        """会话数量。
 
         Note:
-            It will be None for single session.
+            对于单会话将为None。
         """
         return self.num_sessions_
 
@@ -1146,35 +1136,29 @@ class CEBRA(TransformerMixin, BaseEstimator):
         callback: Callable[[int, cebra.solver.Solver], None] = None,
         callback_frequency: int = None,
     ) -> "CEBRA":
-        """Fit the estimator to the given dataset, either by initializing a new model or
-        by adapting the existing trained model.
+        """将估计器拟合到给定的数据集，通过初始化新模型或适应现有训练模型。
 
-        Note:
-            Re-fitting a fitted model with :py:meth:`fit` will reset the parameters and number of iterations.
-            To continue fitting from the previous fit, :py:meth:`partial_fit` must be used.
+        注意:
+            使用:py:meth:`fit`重新拟合已拟合的模型将重置参数和迭代次数。
+            要从之前的拟合继续拟合，必须使用:py:meth:`partial_fit`。
 
-        Tip:
-            We recommend saving the model, using :py:meth:`cebra.CEBRA.save`, before adapting it to a different
-            dataset (setting ``adapt=True``) as the adapted model will replace the previous model in ``cebra_model.state_dict_``.
+        提示:
+            我们建议在将模型适应到不同的数据集（设置``adapt=True``）之前，
+            使用:py:meth:`cebra.CEBRA.save`保存模型，因为适应后的模型将替换
+            ``cebra_model.state_dict_``中的先前模型。
 
         Args:
-            X: A 2D data matrix.
-            y: An arbitrary amount of continuous indices passed as 2D matrices, and up to one
-                discrete index passed as a 1D array. Each index has to match the length of ``X``.
-            adapt: If True, the estimator will be adapted to the given data. This parameter is of
-                use only once the estimator has been fitted at least once (i.e., :py:meth:`cebra.CEBRA.fit`
-                has been called already). Note that it can be used on a fitted model that was saved
-                and reloaded, using :py:meth:`cebra.CEBRA.save` and :py:meth:`cebra.CEBRA.load`. To adapt the
-                model, the first layer of the model is reset so that it corresponds to the new features dimension.
-                The parameters for all other layers are fixed and the first reinitialized layer is re-trained for
-                :py:attr:`cebra.CEBRA.max_adapt_iterations`.
-            callback: If a function is passed here with signature ``callback(num_steps, solver)``,
-                the function will be regularly called at the specified ``callback_frequency``.
-            callback_frequency: Specify the number of iterations that need to pass before triggering
-                the specified ``callback``,
+            X: 一个2D数据矩阵。
+            y: 任意数量的连续索引，作为2D矩阵传递，以及最多一个
+                作为1D数组传递的离散索引。每个索引必须匹配``X``的长度。
+            adapt: 如果为``True``，则适应现有模型而不是重新初始化。
+                如果为``False``，则重新初始化模型。
+            callback: 如果在这里传递一个具有签名``callback(num_steps, solver)``的函数，
+                该函数将以指定的``callback_frequency``定期调用。
+            callback_frequency: 指定在触发指定的``callback``之前需要经过的迭代次数。
 
         Returns:
-            ``self``, to allow chaining of operations.
+            ``self``，以允许操作链接。
 
         Example:
 

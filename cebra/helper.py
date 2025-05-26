@@ -19,7 +19,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-"""Collection of helper functions that did not fit into own modules."""
+"""不适合放入自己模块的辅助函数集合。"""
 
 import io
 import pathlib
@@ -40,13 +40,13 @@ import cebra.data
 
 
 def download_file_from_url(url: str) -> str:
-    """Download a fole from ``url``.
+    """从``url``下载文件。
 
     Args:
-        url: Url to fetch for the file.
+        url: 获取文件的URL。
 
     Returns:
-        The path to the downloaded file.
+        下载文件的路径。
     """
     with tempfile.NamedTemporaryFile() as tf:
         filename = tf.name + ".h5"
@@ -59,7 +59,7 @@ def download_file_from_url(url: str) -> str:
 
 
 def download_file_from_zip_url(url, *, file):
-    """Directly extract files without writing the archive to disk."""
+    """直接提取文件而不将存档写入磁盘。"""
     with tempfile.TemporaryDirectory() as tf:
         foldername = tf
 
